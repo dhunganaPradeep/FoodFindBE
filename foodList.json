@@ -1,0 +1,268 @@
+[
+  {
+    "id": 1,
+    "name": "Pizza Pepperoni",
+    "cookTime": "10-20",
+    "price": 10,
+    "favorite": false,
+    "origins": ["italy"],
+    "stars": 4.5,
+    "imageUrl": "/assets/images/food-1.jpg",
+    "tags": ["FastFood", "Pizza", "Lunch"]
+  },
+  {
+    "id": 2,
+    "name": "Meatball",
+    "price": 20,
+    "cookTime": "20-30",
+    "favorite": true,
+    "origins": ["persia", "middle east", "china"],
+    "stars": 4.7,
+    "imageUrl": "/assets/images/food-2.jpg",
+    "tags": ["SlowFood", "Lunch"]
+  },
+  {
+    "id": 3,
+    "name": "Hamburger",
+    "price": 5,
+    "cookTime": "10-15",
+    "favorite": false,
+    "origins": ["germany", "us"],
+    "stars": 3.5,
+    "imageUrl": "/assets/images/food-3.jpg",
+    "tags": ["FastFood", "Hamburger"]
+  },
+  {
+    "id": 4,
+    "name": "Fried Potatoes",
+    "price": 2,
+    "cookTime": "15-20",
+    "favorite": true,
+    "origins": ["belgium", "france"],
+    "stars": 3.3,
+    "imageUrl": "/assets/images/food-4.jpg",
+    "tags": ["FastFood", "Fry"]
+  },
+  {
+    "id": 5,
+    "name": "Chicken Soup",
+    "price": 11,
+    "cookTime": "40-50",
+    "favorite": false,
+    "origins": ["india", "asia"],
+    "stars": 3.0,
+    "imageUrl": "/assets/images/food-5.jpg",
+    "tags": ["SlowFood", "Soup"]
+  },
+  {
+    "id": 6,
+    "name": "Vegetables Pizza",
+    "price": 9,
+    "cookTime": "40-50",
+    "favorite": false,
+    "origins": ["italy"],
+    "stars": 4.0,
+    "imageUrl": "/assets/images/food-6.jpg",
+    "tags": ["FastFood", "Pizza", "Lunch"]
+  },
+    {
+      "id": 7,
+      "name": "Sushi",
+      "price": 15,
+      "cookTime": "10-15",
+      "favorite": true,
+      "origins": ["japan"],
+      "stars": 4.8,
+      "imageUrl": "/assets/images/food-7.jpg",
+      "tags": ["Seafood", "Sushi", "Dinner"]
+    },
+    {
+      "id": 8,
+      "name": "Spaghetti Carbonara",
+      "price": 12,
+      "cookTime": "20-25",
+      "favorite": false,
+      "origins": ["italy"],
+      "stars": 4.6,
+      "imageUrl": "/assets/images/food-8.jpg",
+      "tags": ["Pasta", "Italian", "Dinner"]
+    },
+    {
+      "id": 9,
+      "name": "Chicken Tikka Masala",
+      "price": 14,
+      "cookTime": "30-40",
+      "favorite": true,
+      "origins": ["india"],
+      "stars": 4.7,
+      "imageUrl": "/assets/images/food-9.jpg",
+      "tags": ["Indian", "Spicy", "Dinner"]
+    },
+    {
+      "id": 10,
+      "name": "Beef Tacos",
+      "price": 8,
+      "cookTime": "15-20",
+      "favorite": false,
+      "origins": ["mexico"],
+      "stars": 4.2,
+      "imageUrl": "/assets/images/food-10.jpg",
+      "tags": ["FastFood", "Mexican", "Lunch"]
+    },
+    {
+      "id": 11,
+      "name": "Caesar Salad",
+      "price": 7,
+      "cookTime": "10-15",
+      "favorite": false,
+      "origins": ["italy"],
+      "stars": 4.0,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["Salad", "Healthy", "Lunch"]
+    },
+    {
+      "id": 12,
+      "name": "Pad Thai",
+      "price": 13,
+      "cookTime": "20-25",
+      "favorite": true,
+      "origins": ["thailand"],
+      "stars": 4.5,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["Noodles", "Thai", "Dinner"]
+    },
+    {
+      "id": 13,
+      "name": "Chocolate Cake",
+      "price": 6,
+      "cookTime": "50-60",
+      "favorite": true,
+      "origins": ["france"],
+      "stars": 4.9,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["Dessert", "Cake"]
+    },
+    {
+      "id": 14,
+      "name": "Fish and Chips",
+      "price": 10,
+      "cookTime": "25-30",
+      "favorite": false,
+      "origins": ["england"],
+      "stars": 4.1,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["FastFood", "Seafood", "Lunch"]
+    },
+    {
+      "id": 15,
+      "name": "Greek Salad",
+      "price": 8,
+      "cookTime": "10-15",
+      "favorite": false,
+      "origins": ["greece"],
+      "stars": 4.3,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["Salad", "Healthy", "Lunch"]
+    },
+    {
+      "id": 16,
+      "name": "Peking Duck",
+      "price": 22,
+      "cookTime": "60-70",
+      "favorite": true,
+      "origins": ["china"],
+      "stars": 4.8,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["Dinner", "Chinese"]
+    },
+    {
+      "id": 17,
+      "name": "Ramen",
+      "price": 12,
+      "cookTime": "15-20",
+      "favorite": true,
+      "origins": ["japan"],
+      "stars": 4.6,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["Noodles", "Soup", "Japanese"]
+    },
+    {
+      "id": 18,
+      "name": "Falafel Wrap",
+      "price": 9,
+      "cookTime": "10-15",
+      "favorite": false,
+      "origins": ["middle east"],
+      "stars": 4.4,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["Vegetarian", "Wrap", "Lunch"]
+    },
+    {
+      "id": 19,
+      "name": "Tom Yum Soup",
+      "price": 11,
+      "cookTime": "20-25",
+      "favorite": true,
+      "origins": ["thailand"],
+      "stars": 4.7,
+      "imageUrl": "/assets/images/food-1.jpg",
+      "tags": ["Soup", "Thai", "Spicy"]
+    },
+    {
+      "id": 20,
+      "name": "French Croissant",
+      "price": 3,
+      "cookTime": "30-40",
+      "favorite": false,
+      "origins": ["france"],
+      "stars": 4.5,
+      "imageUrl": "/assets/images/food-2.jpg",
+      "tags": ["Breakfast", "Pastry", "French"]
+    },
+    {
+      "id": 21,
+      "name": "Steak",
+      "price": 25,
+      "cookTime": "15-20",
+      "favorite": true,
+      "origins": ["us"],
+      "stars": 4.9,
+      "imageUrl": "/assets/images/food-2.jpg",
+      "tags": ["Dinner", "American", "Grill"]
+    },
+    {
+      "id": 22,
+      "name": "Chicken Biryani",
+      "price": 14,
+      "cookTime": "40-50",
+      "favorite": true,
+      "origins": ["india"],
+      "stars": 4.8,
+      "imageUrl": "/assets/images/food-2.jpg",
+      "tags": ["Indian", "Spicy", "Rice"]
+    },
+    {
+      "id": 23,
+      "name": "Lobster Bisque",
+      "price": 18,
+      "cookTime": "30-40",
+      "favorite": false,
+      "origins": ["france"],
+      "stars": 4.7,
+      "imageUrl": "/assets/images/food-2.jpg",
+      "tags": ["Soup", "Seafood", "French"]
+    },
+    {
+      "id": 24,
+      "name": "Panna Cotta",
+      "price": 7,
+      "cookTime": "120-150",
+      "favorite": true,
+      "origins": ["italy"],
+      "stars": 4.9,
+      "imageUrl": "/assets/images/food-2.jpg",
+      "tags": ["Dessert", "Italian"]
+    }
+  ]
+  
+  
