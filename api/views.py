@@ -195,33 +195,21 @@ class FavoriteRestaurantsAPIView(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-# from .models import AddRestaurant
+class AddRestaurantView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = AddRestaurantSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# @csrf_exempt
-# def add_restaurant(request):
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         location = request.POST.get('location')
-#         description = request.POST.get('description')
-#         opening_hours = request.POST.get('opening_hours')
-#         price = request.POST.get('price')
-
-#         restaurant = AddRestaurant.objects.create(
-#             name=name,
-#             location=location,
-#             description=description,
-#             opening_hours=opening_hours,
-#             price=price
-#         )
-#         restaurant.save()
-#         return JsonResponse({'message': 'Restaurant added successfully'})
-
-#     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 class AddRestaurantView(APIView):
     def post(self, request, *args, **kwargs):
-        serializer = AddRestaurantSerializer(data=request.data)
+        data = request.data.copy()
+        data['user'] = request.data.get('user_id')
+        serializer = AddRestaurantSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

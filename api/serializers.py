@@ -128,4 +128,4 @@ class TopRestaurantSerializer(serializers.ModelSerializer):
 class AddRestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddRestaurant
-        fields = ['name', 'location', 'description', 'opening_hours', 'price']
+        fields = ['user', 'name', 'location', 'description', 'opening_hours', 'price']

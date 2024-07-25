@@ -100,6 +100,7 @@ class TopRestaurant(models.Model):
 
 
 class AddRestaurant(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='add_requests')
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     description = models.TextField()

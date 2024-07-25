@@ -11,7 +11,7 @@ from .views import AddToFavoritesAPIView
 from .views import RemoveFromFavoritesAPIView
 from .views import FavoriteRestaurantsAPIView
 from .views import AddRestaurantView
-# from .views import add_restaurant
+
 
 router = DefaultRouter()
 router.register(r'restaurants', RestaurantViewSet)
@@ -27,7 +27,6 @@ urlpatterns = [
     path('add-to-favorites/', AddToFavoritesAPIView.as_view(), name='add_to_favorites'),
     path('remove-from-favorites/', RemoveFromFavoritesAPIView.as_view(), name='remove_from_favorites'),
     path('favorite-restaurants/<int:user_id>/', FavoriteRestaurantsAPIView.as_view(), name='favorite_restaurants'),
-    # path('add-restaurant/', add_restaurant, name='add-restaurant'),
-     path('add-restaurant/', AddRestaurantView.as_view(), name='add-restaurant'),
+    path('add-restaurant/', AddRestaurantView.as_view(), name='add-restaurant'),
 ]
 
