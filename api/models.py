@@ -106,3 +106,4 @@ class AddRestaurant(models.Model):
     description = models.TextField()
     opening_hours = models.CharField(max_length=255)
     price = models.CharField(max_length=255)
+    menu = models.ImageField(upload_to='RequestedMenus/', blank=True, null=True)

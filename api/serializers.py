@@ -124,8 +124,7 @@ class TopRestaurantSerializer(serializers.ModelSerializer):
         fields = ['id', 'restaurant', 'restaurant', 'ranking']
 
 
-
 class AddRestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddRestaurant
-        fields = ['user', 'name', 'location', 'description', 'opening_hours', 'price']
+        fields = ['user', 'name', 'location', 'description', 'opening_hours', 'price', 'menu']

@@ -1,45 +1,40 @@
-# Django imports
-from django.db.models import Count, Q, Avg
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-
-# Django Rest Framework imports
-from rest_framework import generics, status, viewsets
+from rest_framework import viewsets
+from .models import Restaurant
+from .models import TopRestaurant
+from rest_framework import generics 
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
+from rest_framework import status
+from .models import Tag
+from django.db.models import Count, Q
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.http import JsonResponse
+
+from .serializers import TopRestaurantSerializer
+from .serializers import RestaurantListSerializer
+from .serializers import RestaurantDetailSerializer
+from .serializers import TagSerializer
+from .serializers import CreateReviewSerializer
+from .serializers import ReviewSerializer
+from .serializers import FavoriteRestaurantSerializer
+from .serializers import AddRestaurantSerializer
+
+
 from rest_framework.views import APIView
-from rest_framework.exceptions import NotFound
-
-# Google authentication imports
-from google.auth.transport import requests
+from rest_framework.response import Response
+from rest_framework import status
 from google.oauth2 import id_token
-
-# Model imports
-from .models import Restaurant, TopRestaurant, CustomUser, Tag, Review
-
-# Serializer imports
-from .serializers import (
-    AddRestaurantSerializer,
-    CreateReviewSerializer,
-    CustomUserSerializer,
-    FavoriteRestaurantSerializer,
-    RestaurantDetailSerializer,
-    RestaurantListSerializer,
-    ReviewSerializer,
-    TagSerializer,
-    TopRestaurantSerializer
-)
-
-# Other imports
+from google.auth.transport import requests
+from .models import CustomUser
+from .models import Review
+from .models import AddRestaurant
+from .serializers import CustomUserSerializer
 import requests
 
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantListSerializer
-    permission_classes = [AllowAny]
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -48,59 +43,16 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        user_id = self.request.query_params.get('user_id')
-        recommend = self.request.query_params.get('recommend', 'false').lower() == 'true'
         tags = self.request.query_params.getlist('tags')
 
-        if recommend:
-            if user_id:
-                user = get_object_or_404(CustomUser, id=user_id)
-                queryset = self.get_recommended_restaurants(user)
-            else:
-                raise NotFound(detail="User ID is required for recommendations")
-        elif tags:
+        if tags:
+            # Annotate the queryset with the count of matching tags 
             queryset = queryset.annotate(
                 matching_tags_count=Count(
                     'tags', filter=Q(tags__name__in=tags))
             ).order_by('-matching_tags_count', 'id')
 
         return queryset
-
-    def get_recommended_restaurants(self, user):
-        user_favorites = user.favorite_restaurants.all()
-        user_reviews = Review.objects.filter(user=user)
-
-        similar_users = CustomUser.objects.filter(
-            Q(favorite_restaurants__in=user_favorites) |
-            Q(reviews__restaurant__in=[review.restaurant for review in user_reviews])
-        ).exclude(id=user.id).distinct()
-
-        collaborative_recommendations = Restaurant.objects.filter(
-            Q(favorited_by__in=similar_users) |
-            Q(reviews__user__in=similar_users)
-        ).exclude(
-            Q(favorited_by=user) |
-            Q(reviews__user=user)
-        ).distinct()
-
-        user_tags = Tag.objects.filter(restaurants__in=user_favorites).distinct()
-        content_recommendations = Restaurant.objects.filter(tags__in=user_tags).exclude(
-            Q(favorited_by=user) |
-            Q(reviews__user=user)
-        ).distinct()
-
-        recommended_restaurants = (collaborative_recommendations | content_recommendations).distinct()
-
-        recommended_restaurants = recommended_restaurants.annotate(
-            avg_rating=Avg('reviews__rating'),
-            no_of_reviews=Count('reviews')
-        ).order_by('-avg_rating', '-no_of_reviews')
-
-        if not recommended_restaurants.exists():
-            return Restaurant.objects.all()
-        
-        return recommended_restaurants
-
 
 
 class TopRestaurantViewSet(viewsets.ModelViewSet):
@@ -122,6 +74,7 @@ class GoogleLoginView(APIView):
         try:
             user_info_response = requests.get(
                 'https://www.googleapis.com/oauth2/v3/userinfo',
+                # https://openidconnect.googleapis.com/v1/userinfo
                 headers={'Authorization': f'Bearer {token}'}
             )
             user_info_response.raise_for_status()
@@ -150,9 +103,26 @@ class GoogleLoginView(APIView):
             user.set_unusable_password()
             user.save()
 
-        # Return user info without creating a session
         serializer = CustomUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class GoogleLoginTestView(APIView):
+    def post(self, request):
+        # Log the request data for debugging purposes
+        print("Request received with data:", request.data)
+
+        token = request.data.get('token')
+        if not token:
+            return Response({'error': 'Token is missing'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Simulate a successful response
+        user_data = {
+            'id': 'test_user_id',
+            'username': 'test_user',
+            'email': 'test_user@example.com',
+            'profile_picture': 'http://example.com/test_user.jpg'
+        }
+        return Response(user_data, status=status.HTTP_200_OK)
     
 class CreateReviewAPIView(APIView):
     def post(self, request):
@@ -190,6 +160,7 @@ class AddToFavoritesAPIView(APIView):
         except Restaurant.DoesNotExist:
             return Response({'error': 'Restaurant not found'}, status=status.HTTP_404_NOT_FOUND)
 
+
 class RemoveFromFavoritesAPIView(APIView):
 
     def post(self, request):
@@ -213,6 +184,7 @@ class RemoveFromFavoritesAPIView(APIView):
         except Restaurant.DoesNotExist:
             return Response({'error': 'Restaurant not found'}, status=status.HTTP_404_NOT_FOUND)
 
+
 class FavoriteRestaurantsAPIView(APIView):
 
     def get(self, request, user_id):
@@ -225,17 +197,6 @@ class FavoriteRestaurantsAPIView(APIView):
         except CustomUser.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-
-class AddRestaurantView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = AddRestaurantSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 class AddRestaurantView(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
@@ -246,4 +207,18 @@ class AddRestaurantView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    
+
+class UserRequestedRestaurantsAPIView(generics.ListAPIView):
+    serializer_class = AddRestaurantSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        
+        if not user_id:
+            return AddRestaurant.objects.none()
+        
+        try:
+            return AddRestaurant.objects.filter(user_id=user_id)
+        except Exception as e:
+            print(f"Error fetching requested restaurants: {e}")
+            return AddRestaurant.objects.none()
