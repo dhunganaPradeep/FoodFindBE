@@ -70,7 +70,6 @@ class Menu(models.Model):
         ('Lunch', 'Lunch'),
         ('Dinner', 'Dinner'),
         ('Beverages', 'Beverages'),
-        # Add more categories as needed
     ])
 
     def __str__(self):

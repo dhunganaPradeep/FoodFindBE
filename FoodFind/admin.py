@@ -119,8 +119,12 @@ class ReviewAdmin(admin.ModelAdmin):
 
 # admin.py
 class AddRestaurantRequestAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'location', 'description', 'opening_hours', 'price')
+    list_display = ('user', 'name', 'location', 'description', 'opening_hours', 'edit')
     search_fields = ('name', 'location', 'description', 'user__username')
+
+    def edit(self, obj):
+        return format_html('<a href="{}">{}</a>', obj.id, 'Edit')
+    edit.short_description = 'Modify' 
 
 admin.site.register(AddRestaurant, AddRestaurantRequestAdmin)
 admin.site.register(Review, ReviewAdmin)

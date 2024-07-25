@@ -78,7 +78,7 @@ class CreateReviewSerializer(serializers.ModelSerializer):
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
-        fields = ['id', 'name', 'price']
+        fields = ['id', 'name', 'price','category']
 
 
 class RestaurantImageSerializer(serializers.ModelSerializer):
