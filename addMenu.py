@@ -6,68 +6,68 @@ import random
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'admin.settings')
 django.setup()
 
-from api.models import Restaurant, MenuItem
+from api.models import Restaurant, Menu
 
 # Sample menu data
 menu_data = [
     {
         "name": "Nepali Menu",
         "items": [
-            {"name": "Dal Bhat", "price": 338},
-            {"name": "Momo", "price": 169},
-            {"name": "Newari Khaja Set", "price": 676},
-            {"name": "Aloo Tama", "price": 253},
-            {"name": "Sel Roti", "price": 84}
+            {"name": "Dal Bhat", "price": 338, "category": "Food"},
+            {"name": "Momo", "price": 169, "category": "Food"},
+            {"name": "Newari Khaja Set", "price": 676, "category": "Lunch"},
+            {"name": "Aloo Tama", "price": 253, "category": "Dinner"},
+            {"name": "Sel Roti", "price": 84, "category": "Beverages"}
         ]
     },
     {
         "name": "Newari Menu",
         "items": [
-            {"name": "Yomari", "price": 253},
-            {"name": "Chatamari", "price": 253},
-            {"name": "Chhoyela", "price": 423},
-            {"name": "Bara", "price": 169},
-            {"name": "Sapu Mhicha", "price": 423}
+            {"name": "Yomari", "price": 253, "category": "Food"},
+            {"name": "Chatamari", "price": 253, "category": "Food"},
+            {"name": "Chhoyela", "price": 423, "category": "Lunch"},
+            {"name": "Bara", "price": 169, "category": "Dinner"},
+            {"name": "Sapu Mhicha", "price": 423, "category": "Beverages"}
         ]
     },
     {
         "name": "Indian Menu",
         "items": [
-            {"name": "Butter Chicken", "price": 845},
-            {"name": "Paneer Tikka", "price": 507},
-            {"name": "Masala Dosa", "price": 338},
-            {"name": "Biryani", "price": 591},
-            {"name": "Naan", "price": 84}
+            {"name": "Butter Chicken", "price": 845, "category": "Food"},
+            {"name": "Paneer Tikka", "price": 507, "category": "Food"},
+            {"name": "Masala Dosa", "price": 338, "category": "Lunch"},
+            {"name": "Biryani", "price": 591, "category": "Dinner"},
+            {"name": "Naan", "price": 84, "category": "Beverages"}
         ]
     },
     {
         "name": "Thai Menu",
         "items": [
-            {"name": "Pad Thai", "price": 591},
-            {"name": "Green Curry", "price": 591},
-            {"name": "Tom Yum Soup", "price": 423},
-            {"name": "Thai Spring Rolls", "price": 253},
-            {"name": "Sticky Rice with Mango", "price": 338}
+            {"name": "Pad Thai", "price": 591, "category": "Food"},
+            {"name": "Green Curry", "price": 591, "category": "Food"},
+            {"name": "Tom Yum Soup", "price": 423, "category": "Lunch"},
+            {"name": "Thai Spring Rolls", "price": 253, "category": "Dinner"},
+            {"name": "Sticky Rice with Mango", "price": 338, "category": "Beverages"}
         ]
     },
     {
         "name": "Italian Menu",
         "items": [
-            {"name": "Margherita Pizza", "price": 507},
-            {"name": "Spaghetti Carbonara", "price": 591},
-            {"name": "Lasagna", "price": 591},
-            {"name": "Bruschetta", "price": 253},
-            {"name": "Tiramisu", "price": 338}
+            {"name": "Margherita Pizza", "price": 507, "category": "Food"},
+            {"name": "Spaghetti Carbonara", "price": 591, "category": "Food"},
+            {"name": "Lasagna", "price": 591, "category": "Lunch"},
+            {"name": "Bruschetta", "price": 253, "category": "Dinner"},
+            {"name": "Tiramisu", "price": 338, "category": "Beverages"}
         ]
     },
     {
         "name": "Fast Food Menu",
         "items": [
-            {"name": "Cheeseburger", "price": 253},
-            {"name": "French Fries", "price": 169},
-            {"name": "Hot Dog", "price": 169},
-            {"name": "Chicken Nuggets", "price": 253},
-            {"name": "Milkshake", "price": 253}
+            {"name": "Cheeseburger", "price": 253, "category": "Food"},
+            {"name": "French Fries", "price": 169, "category": "Food"},
+            {"name": "Hot Dog", "price": 169, "category": "Lunch"},
+            {"name": "Chicken Nuggets", "price": 253, "category": "Dinner"},
+            {"name": "Milkshake", "price": 253, "category": "Beverages"}
         ]
     }
 ]
@@ -86,14 +86,13 @@ def assign_menu_items():
             if item not in selected_items:
                 selected_items.append(item)
 
-        # Create MenuItems for the selected items
+        # Create Menu items for the selected items
         for item in selected_items:
-            # Format the price with ".00"
-            formatted_price = f'{item["price"]}.00'
-            MenuItem.objects.create(
+            Menu.objects.create(
                 restaurant=restaurant,
                 name=item["name"],
-                price=formatted_price
+                price=item["price"],
+                category=item["category"]
             )
 
         print(f'Successfully assigned menu items to restaurant {restaurant.name}')
