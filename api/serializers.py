@@ -6,7 +6,8 @@ from .models import Menu
 from .models import TopRestaurant
 from .models import Tag
 from .models import CustomUser
-from .models import AddRestaurant
+from .models import AddRestaurant, MenuImage
+
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -123,8 +124,22 @@ class TopRestaurantSerializer(serializers.ModelSerializer):
         model = TopRestaurant
         fields = ['id', 'restaurant', 'restaurant', 'ranking']
 
+class MenuImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuImage
+        fields = ['image']
 
 class AddRestaurantSerializer(serializers.ModelSerializer):
+    menu_images = MenuImageSerializer(many=True, required=False)  # Adjust as needed
+
     class Meta:
         model = AddRestaurant
-        fields = ['user', 'name', 'location', 'description', 'opening_hours', 'price', 'menu']
+        fields = ['user', 'name', 'location', 'description', 'opening_hours', 'price', 'menu_images']
+
+    def create(self, validated_data):
+        menu_images_data = validated_data.pop('menu_images', [])
+        restaurant = AddRestaurant.objects.create(**validated_data)
+        for image_data in menu_images_data:
+            menu_image = MenuImage.objects.create(**image_data)
+            restaurant.menu_images.add(menu_image)
+        return restaurant

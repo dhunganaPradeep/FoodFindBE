@@ -98,6 +98,9 @@ class TopRestaurant(models.Model):
         return f"{self.restaurant.name} - Ranking: {self.ranking}"
 
 
+class MenuImage(models.Model):
+    image = models.ImageField(upload_to='RequestedMenus/')
+
 class AddRestaurant(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='add_requests')
     name = models.CharField(max_length=255)
@@ -105,4 +108,4 @@ class AddRestaurant(models.Model):
     description = models.TextField()
     opening_hours = models.CharField(max_length=255)
     price = models.CharField(max_length=255)
-    menu = models.ImageField(upload_to='RequestedMenus/', blank=True, null=True)
+    menu_images = models.ManyToManyField(MenuImage, related_name='restaurants', blank=True)

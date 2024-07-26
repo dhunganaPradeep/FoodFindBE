@@ -10,6 +10,10 @@ from django.db.models import Count, Q
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
+from django.utils import timezone
+from datetime import timedelta
+
+
 
 from .serializers import TopRestaurantSerializer
 from .serializers import RestaurantListSerializer
@@ -19,6 +23,7 @@ from .serializers import CreateReviewSerializer
 from .serializers import ReviewSerializer
 from .serializers import FavoriteRestaurantSerializer
 from .serializers import AddRestaurantSerializer
+from .serializers import MenuImageSerializer
 
 
 from rest_framework.views import APIView
@@ -26,9 +31,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from google.oauth2 import id_token
 from google.auth.transport import requests
+from rest_framework.parsers import MultiPartParser, FormParser
 from .models import CustomUser
 from .models import Review
 from .models import AddRestaurant
+from .models import MenuImage
 from .serializers import CustomUserSerializer
 import requests
 
@@ -198,15 +205,43 @@ class FavoriteRestaurantsAPIView(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class AddRestaurantView(APIView):
-    def post(self, request, *args, **kwargs):
-        data = request.data.copy()
-        data['user'] = request.data.get('user_id')
-        serializer = AddRestaurantSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    parser_classes = [MultiPartParser, FormParser]
 
+    def post(self, request, *args, **kwargs):
+        # Extract user ID
+        user_id = request.data.get('user_id')
+        if not user_id:
+            return Response({'error': 'User ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Prepare restaurant data(pickle buffer vanne kura namilera gareko i don't know what it means)
+        restaurant_data = {
+            'name': request.data.get('name'),
+            'location': request.data.get('location'),
+            'description': request.data.get('description'),
+            'opening_hours': request.data.get('opening_hours'),
+            'price': request.data.get('price'),
+            'user': user_id,
+        }
+
+        # restaurant instance without images
+        serializer = AddRestaurantSerializer(data=restaurant_data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        restaurant = serializer.save()
+
+        #Multiple image hune vayeko le process gareko
+        menu_images = []
+        for key, file in request.FILES.items():
+            if key.startswith('menu_'):
+                menu_image = MenuImage.objects.create(image=file)
+                menu_images.append(menu_image.id)
+
+        # Image lai restaurant sanga associate garne
+        restaurant.menu_images.set(menu_images)
+        restaurant.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class UserRequestedRestaurantsAPIView(generics.ListAPIView):
     serializer_class = AddRestaurantSerializer
