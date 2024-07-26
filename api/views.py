@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from .models import Tag
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Avg
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse
@@ -24,7 +24,9 @@ from .serializers import ReviewSerializer
 from .serializers import FavoriteRestaurantSerializer
 from .serializers import AddRestaurantSerializer
 from .serializers import MenuImageSerializer
-
+from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import NotFound
+from django.shortcuts import get_object_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -42,6 +44,7 @@ import requests
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantListSerializer
+    permission_classes = [AllowAny]
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -50,16 +53,55 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        user_id = self.request.query_params.get('user_id')
+        recommend = self.request.query_params.get('recommend', 'false').lower() == 'true'
         tags = self.request.query_params.getlist('tags')
 
-        if tags:
-            # Annotate the queryset with the count of matching tags 
+        if recommend:
+            if user_id:
+                user = get_object_or_404(CustomUser, id=user_id)
+                queryset = self.get_recommended_restaurants(user)
+            else:
+                raise NotFound(detail="User ID is required for recommendations")
+        elif tags:
             queryset = queryset.annotate(
                 matching_tags_count=Count(
                     'tags', filter=Q(tags__name__in=tags))
             ).order_by('-matching_tags_count', 'id')
 
         return queryset
+
+    def get_recommended_restaurants(self, user):
+        user_favorites = user.favorite_restaurants.all()
+        user_reviews = Review.objects.filter(user=user)
+
+        similar_users = CustomUser.objects.filter(
+            Q(favorite_restaurants__in=user_favorites) |
+            Q(reviews__restaurant__in=[review.restaurant for review in user_reviews])
+        ).exclude(id=user.id).distinct()
+
+        collaborative_recommendations = Restaurant.objects.filter(
+            Q(favorited_by__in=similar_users) |
+            Q(reviews__user__in=similar_users)
+        ).exclude(
+            Q(favorited_by=user) |
+            Q(reviews__user=user)
+        ).distinct()
+
+        user_tags = Tag.objects.filter(restaurants__in=user_favorites).distinct()
+        content_recommendations = Restaurant.objects.filter(tags__in=user_tags).exclude(
+            Q(favorited_by=user) |
+            Q(reviews__user=user)
+        ).distinct()
+
+        recommended_restaurants = (collaborative_recommendations | content_recommendations).distinct()
+
+        recommended_restaurants = recommended_restaurants.annotate(
+            avg_rating=Avg('reviews__rating'),
+            no_of_reviews=Count('reviews')
+        ).order_by('-avg_rating', '-no_of_reviews')
+
+        return recommended_restaurants
 
 
 class TopRestaurantViewSet(viewsets.ModelViewSet):
