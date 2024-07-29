@@ -32,16 +32,23 @@ class RecommendationTests(TestCase):
         self.client.login(username='user1', password='password')
 
         # Get recommendations for user1
-        response = self.client.get('/api/restaurants/', {'recommend': 'true'})
+        response = self.client.get('api/restaurants/', {'recommend': 'true'})
+        
+        # Debugging information
+        print(f"Response status code: {response.status_code}")
+        print(f"Response content: {response.content}")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Verify the recommendations
         recommended_restaurants = response.json()
-        print(recommended_restaurants)
-        self.assertTrue(any(r['id'] == self.restaurant2.id for r in recommended_restaurants))
+        print("Recommended restaurants:", recommended_restaurants)
+        self.assertTrue(any(r['id'] == self.restaurant2.id for r in recommended_restaurants), "Restaurant 2 should be in recommendations")
 
         # Clean up login session
         self.client.logout()
+
+
 
     # def test_no_recommendations_for_anonymous(self):
     #     # Get recommendations for anonymous user
