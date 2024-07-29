@@ -2,7 +2,7 @@
 
 Welcome to FoodFind, a restaurant discovery web app. It helps users find and explore restaurants based on their tastes, leveraging a user-friendly interface built with Vite and TypeScript. This project was completed as part of my 6th semester Software Engineering degree. Discover new dining spots, read reviews, and connect with food lovers in your community with FoodFind! 
 
-The backend repository can be found [here](https://github.com/dhunganaPradeep/FoodFindBE).
+The frontend repository can be found [here](https://github.com/visionrijal/FoodFind).
 
 ## Objectives
 
