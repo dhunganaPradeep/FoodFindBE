@@ -32,7 +32,7 @@ class RecommendationTests(TestCase):
         self.client.login(username='user1', password='password')
 
         # Get recommendations for user1
-        response = self.client.get('api/restaurants/', {'recommend': 'true'})
+        response = self.client.get('/restaurants/', {'recommend': 'true'})
         
         # Debugging information
         print(f"Response status code: {response.status_code}")
