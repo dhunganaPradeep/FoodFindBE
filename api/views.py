@@ -54,7 +54,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         user_id = self.request.query_params.get('user_id')
-        recommend = self.request.query_params.get('recommend', 'false').lower() == 'true'
+        recommend = self.request.query_params.get('recommend') == 'true'
         tags = self.request.query_params.getlist('tags')
 
         if recommend:
@@ -72,13 +72,20 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         return queryset
 
     def get_recommended_restaurants(self, user):
+        # Debugging
+        print(f"User: {user}")
+        
         user_favorites = user.favorite_restaurants.all()
+        print(f"User Favorites: {user_favorites}")
+        
         user_reviews = Review.objects.filter(user=user)
+        print(f"User Reviews: {user_reviews}")
 
         similar_users = CustomUser.objects.filter(
             Q(favorite_restaurants__in=user_favorites) |
             Q(reviews__restaurant__in=[review.restaurant for review in user_reviews])
         ).exclude(id=user.id).distinct()
+        print(f"Similar Users: {similar_users}")
 
         collaborative_recommendations = Restaurant.objects.filter(
             Q(favorited_by__in=similar_users) |
@@ -87,21 +94,28 @@ class RestaurantViewSet(viewsets.ModelViewSet):
             Q(favorited_by=user) |
             Q(reviews__user=user)
         ).distinct()
+        print(f"Collaborative Recommendations: {collaborative_recommendations}")
 
         user_tags = Tag.objects.filter(restaurants__in=user_favorites).distinct()
+        print(f"User Tags: {user_tags}")
+
         content_recommendations = Restaurant.objects.filter(tags__in=user_tags).exclude(
             Q(favorited_by=user) |
             Q(reviews__user=user)
         ).distinct()
+        print(f"Content Recommendations: {content_recommendations}")
 
         recommended_restaurants = (collaborative_recommendations | content_recommendations).distinct()
+        print(f"Recommended Restaurants before annotations: {recommended_restaurants}")
 
         recommended_restaurants = recommended_restaurants.annotate(
             avg_rating=Avg('reviews__rating'),
             no_of_reviews=Count('reviews')
         ).order_by('-avg_rating', '-no_of_reviews')
+        print(f"Recommended Restaurants after annotations: {recommended_restaurants}")
 
         return recommended_restaurants
+
 
 
 class TopRestaurantViewSet(viewsets.ModelViewSet):
