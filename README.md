@@ -108,7 +108,7 @@ Below are some screenshots and outputs from the project:
 
 ## Collaborators
 - [Pradip Dhungana](https://dhunganapradip.com.np)
-- [Vision Rijal](https://visionrijal.com.np/)
+- [Vision Rijal]
 - [Bishnu Timilsena](https://github.com/BishnuTimilsena)
 
 
